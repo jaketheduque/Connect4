@@ -9,6 +9,9 @@
 #define BOARD_HEIGHT 5
 
 int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
+int checkHorizontal(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
+int checkVertical(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
+int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int dropPiece(char c, int place, int rows, int columns, char board[][columns]); 
 void displayBoard(int columns, char board[][columns]);
 
@@ -103,6 +106,22 @@ int dropPiece(char c, int place, int rows, int columns, char board[][columns]) {
 }
 
 int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]) {
+    if (checkHorizontal(c, placeRow, placeColumn, rows, columns, board) != 0) {
+       return 1;
+    }
+    
+    if (checkVertical(c, placeRow, placeColumn, rows, columns, board) != 0) {
+       return 1;
+    }
+    
+    if (checkDiagonals(c, placeRow, placeColumn, rows, columns, board) != 0) {
+       return 1;
+    }
+
+    return 0;    
+}
+
+int checkHorizontal(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]) {
     // Check from left (horizontal)
     for (int startOffset = -3 ; startOffset <= 0 ; startOffset++) {
         int startColumn = placeColumn + startOffset;
@@ -118,7 +137,11 @@ int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, ch
 
         if (count == 4) return 1;
     }
+    
+    return 0;
+}
 
+int checkVertical(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]) {
     // Check from top (vertical)
     for (int startOffset = -3 ; startOffset <= 0 ; startOffset++) {
         int startRow = placeRow + startOffset;
@@ -135,6 +158,10 @@ int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, ch
         if (count == 4) return 1;
     }
 
+    return 0;
+}
+
+int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]) {
     // Check from top-left to bottom-right
     for (int startOffset = -3 ; startOffset <= 0 ; startOffset++) {
         int startRow = placeRow + startOffset;
@@ -151,7 +178,8 @@ int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, ch
 
         if (count == 4) return 1;
     }
-
+ 
+    
     // Check from top-right to bottom-left
     for (int startOffset = -3 ; startOffset <= 0 ; startOffset++) {
         int startRow = placeRow + startOffset;
@@ -169,8 +197,9 @@ int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, ch
         if (count == 4) return 1;
     }
 
-    return 0;    
+    return 0;
 }
+
 
 void displayBoard(int columns, char board[][columns]) {
     for (int i = 0 ; i < BOARD_HEIGHT ; i++) {
