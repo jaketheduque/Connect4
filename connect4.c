@@ -44,7 +44,14 @@ int main() {
         case 2:
             // Initialize the board from a file
             FILE* fptr = fopen("saved_game.txt", "r");
+            
+            if (fptr == NULL) {
+                printf("Error opening game file!\n");
+                return 1;
+            }
+            
             getBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+            fclose(fptr);
             break;
     }
 
