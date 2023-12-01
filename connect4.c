@@ -70,9 +70,17 @@ int main() {
 
             if (place == 0) {
                 FILE* fptr = fopen("saved_game.txt", "w");
+                
+                if (fptr == NULL) {
+                    printf("There was an error saving the game!\n");
+                    return 1;
+                }
+                
                 saveBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+                fclose(fptr);
                 return 0;
             }
+            
 
             if (place > 5 || place < 1) {
                 printf("Please enter a valid column!\n");
@@ -107,7 +115,14 @@ int main() {
   
             if (place == 0) {
                 FILE* fptr = fopen("saved_game.txt", "w");
+                
+                if (fptr == NULL) {
+                    printf("There was an error saving the game!\n");
+                    return 1;
+                }
+                
                 saveBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+                fclose(fptr);
                 return 0;
             }
 
