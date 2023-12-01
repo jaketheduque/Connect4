@@ -158,10 +158,15 @@ int dropPiece(char c, int place, int rows, int columns, char board[][columns]) {
 }
 
 int checkTie(int rows, int columns, char board[][columns]) {
+    int sum = 0;
     for (int column = 0 ; column < columns ; column++) {
         if (dropPiece('1', column, rows, columns, board) != 0) {
-            return -1;
+            sum++;
         }
+    }
+
+    if (sum == rows-1) {
+        return -1;
     }
 
     return 0;
