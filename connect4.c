@@ -113,6 +113,7 @@ int main() {
 
         if (win < 0) {
             printf("The game is tied!\n");
+            return 0;
         }
 
         // Have player two choose a column to drop a piece until a successful drop
@@ -158,6 +159,7 @@ int main() {
 
         if (win < 0) {
             printf("The game is tied!\n");
+            return 0;
         }
          
     }
@@ -182,13 +184,13 @@ int dropPiece(char c, int place, int rows, int columns, char board[][columns]) {
 int checkTie(int rows, int columns, char board[][columns]) {
     int sum = 0;
     for (int column = 0 ; column < columns ; column++) {
-        if (dropPiece('1', column, rows, columns, board) != 0) {
+        if (board[0][column] != '-') {
             sum++;
         }
     }
 
     if (sum == rows) {
-        return -1;
+        return 1;
     }
 
     return 0;
