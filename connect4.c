@@ -165,7 +165,7 @@ int checkTie(int rows, int columns, char board[][columns]) {
         }
     }
 
-    if (sum == rows-1) {
+    if (sum == rows) {
         return -1;
     }
 
