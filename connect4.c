@@ -13,6 +13,7 @@ int checkHorizontal(char c, int placeRow, int placeColumn, int rows, int columns
 int checkVertical(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int dropPiece(char c, int place, int rows, int columns, char board[][columns]); 
+int checkTie(int rows, int columns, char board[][columns]);
 void displayBoard(int rows, int columns, char board[][columns]);
 void getBoard(FILE* fptr, int rows, int columns, char board[][columns]);
 void saveBoard(FILE* fptr, int rows, int columns, char board[][columns]);
@@ -90,9 +91,13 @@ int main() {
 
         int win = checkWinner('1', result, place-1, BOARD_HEIGHT, BOARD_WIDTH, board); 
 
-        if (win != 0) {
+        if (win > 0) {
             printf("%s won!!!!!\n", name1);
             return 0;
+        }
+
+        if (win < 0) {
+            printf("The game is tied!\n");
         }
 
         // Have player two choose a column to drop a piece until a successful drop
@@ -124,10 +129,15 @@ int main() {
         
         win = checkWinner('2', result, place-1, BOARD_HEIGHT, BOARD_WIDTH, board);
         
-        if (win != 0) {
+        if (win > 0) {
             printf("%s won!!!!!\n", name2);
             return 0;
-        } 
+        }
+
+        if (win < 0) {
+            printf("The game is tied!\n");
+        }
+         
     }
 
     return 0;
@@ -147,7 +157,21 @@ int dropPiece(char c, int place, int rows, int columns, char board[][columns]) {
     return -1;
 }
 
+int checkTie(int rows, int columns, char board[][columns]) {
+    for (int column = 0 ; column < columns ; column++) {
+        if (dropPiece('1', column, rows, columns, board) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]) {
+    if (checkTie(rows, columns, board) != 0) {
+        return -1;
+    }
+    
     if (checkHorizontal(c, placeRow, placeColumn, rows, columns, board) != 0) {
        return 1;
     }
@@ -241,8 +265,7 @@ int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns,
 
     return 0;
 }
-
-
+ 
 void displayBoard(int rows, int columns, char board[][columns]) {
     for (int i = 0 ; i < rows ; i++) {
         for (int j = 0 ; j < columns ; j++) {
