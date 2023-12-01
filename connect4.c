@@ -3,30 +3,59 @@
 // Connect 4
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #define BOARD_WIDTH 5
 #define BOARD_HEIGHT 5
+#define MAX_NAME_LENGTH 50
 
 int checkWinner(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int checkHorizontal(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int checkVertical(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns, char board[][columns]);
 int dropPiece(char c, int place, int rows, int columns, char board[][columns]); 
-void displayBoard(int columns, char board[][columns]);
+void displayBoard(int rows, int columns, char board[][columns]);
+void getBoard(FILE* fptr, int rows, int columns, char board[][columns]);
+void saveBoard(FILE* fptr, int rows, int columns, char board[][columns]);
 
 int main() {
-    char board[BOARD_HEIGHT][BOARD_WIDTH];
+    // Prompt the user with game menu
+    printf("CONNECT-4\n");
+    printf("1) Start a new game\n");
+    printf("2) Load an existing game\n");
+    printf("0) Exit\n\n");
 
-    // Initialize the board with dashes
-    for (int i = 0 ; i < BOARD_HEIGHT ; i++) {
-        for (int j = 0 ; j < BOARD_WIDTH ; j++) {
-            board[i][j] = '-';
-        }
-    }
+    int option;
+    printf("Please choose an option from the menu above: ");
+    scanf("%d", &option);
     
-    system("clear");
-    displayBoard(BOARD_WIDTH, board);
+    char board[BOARD_HEIGHT][BOARD_WIDTH];
+    switch (option) {
+        case 0:
+            return 0;
+        case 1:
+            // Initialize the board with dashes
+            for (int i = 0 ; i < BOARD_HEIGHT ; i++) {
+                for (int j = 0 ; j < BOARD_WIDTH ; j++) {
+                    board[i][j] = '-';
+                }
+            }
+            break;
+        case 2:
+            // Initialize the board from a file
+            FILE* fptr = fopen("saved_game.txt", "r");
+            getBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+            break;
+    }
+
+    char name1[MAX_NAME_LENGTH];
+    printf("Player 1, enter your name: ");
+    scanf(" %s", name1);
+
+    char name2[MAX_NAME_LENGTH];
+    printf("Player 2, enter your name: ");
+    scanf(" %s", name2);
+
+    displayBoard(BOARD_HEIGHT, BOARD_WIDTH, board);
 
     int winner = 0;
     while (winner == 0) {
@@ -35,8 +64,14 @@ int main() {
        
         // Have player one choose a column to drop a piece until a successful drop
         do {
-            printf("Player one, place a piece by entering a column between 1 and 5: ");
+            printf("%s, place a piece by entering a column between 1 and 5 or save and exit the game by entering 0: ", name1);
             scanf("%d", &place);
+
+            if (place == 0) {
+                FILE* fptr = fopen("saved_game.txt", "w");
+                saveBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+                return 0;
+            }
 
             if (place > 5 || place < 1) {
                 printf("Please enter a valid column!\n");
@@ -50,21 +85,28 @@ int main() {
             }
         } while (result < 0);
 
-        system("clear");
-        displayBoard(BOARD_WIDTH, board);
+        printf("\n");
+        displayBoard(BOARD_HEIGHT, BOARD_WIDTH, board);
 
         int win = checkWinner('1', result, place-1, BOARD_HEIGHT, BOARD_WIDTH, board); 
 
         if (win != 0) {
-            printf("Player one won!!!!!\n");
+            printf("%s won!!!!!\n", name1);
             return 0;
         }
 
         // Have player two choose a column to drop a piece until a successful drop
         do {
-            printf("Player two, place a piece by entering a column between 1 and 5: ");
+            printf("%s, place a piece by entering a column between 1 and 5 or save and exit the game by entering 0: ", name2); 
             scanf("%d", &place);
-   
+  
+            if (place == 0) {
+                FILE* fptr = fopen("saved_game.txt", "w");
+                saveBoard(fptr, BOARD_HEIGHT, BOARD_WIDTH, board);
+                return 0;
+            }
+
+
             if (place > 5 || place < 1) {
                 printf("Please enter a valid column!\n");
                 continue;
@@ -77,13 +119,13 @@ int main() {
             }
         } while (result < 0);
 
-        system("clear");
-        displayBoard(BOARD_WIDTH, board);
+        printf("\n");
+        displayBoard(BOARD_HEIGHT, BOARD_WIDTH, board);
         
         win = checkWinner('2', result, place-1, BOARD_HEIGHT, BOARD_WIDTH, board);
         
         if (win != 0) {
-            printf("Player two won!!!!!\n");
+            printf("%s won!!!!!\n", name2);
             return 0;
         } 
     }
@@ -201,11 +243,29 @@ int checkDiagonals(char c, int placeRow, int placeColumn, int rows, int columns,
 }
 
 
-void displayBoard(int columns, char board[][columns]) {
-    for (int i = 0 ; i < BOARD_HEIGHT ; i++) {
-        for (int j = 0 ; j < BOARD_WIDTH ; j++) {
+void displayBoard(int rows, int columns, char board[][columns]) {
+    for (int i = 0 ; i < rows ; i++) {
+        for (int j = 0 ; j < columns ; j++) {
             printf("%c ", board[i][j]);
         }
         printf("\n");
     }
 }
+
+void getBoard(FILE* fptr, int rows, int columns, char board[][columns]) {
+    for (int row = 0 ; row < rows ; row++) {
+        for (int column = 0 ; column < columns ; column++) {
+            fscanf(fptr, "%c ", &board[row][column]);
+        }
+    }
+}
+
+void saveBoard(FILE* fptr, int rows, int columns, char board[][columns]) {
+    for (int row = 0 ; row < rows ; row++) {
+        for (int column = 0 ; column < columns ; column++) {
+            fprintf(fptr, "%c ", board[row][column]);
+        }
+        fprintf(fptr, "\n");
+    }
+}
+
